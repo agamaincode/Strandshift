@@ -1,2 +1,2 @@
 # Strandshift
-A simple survival game made by 3 students, written in python with pygame
+A simple turn-based RPG game made by 3 students, written in python with pygame
