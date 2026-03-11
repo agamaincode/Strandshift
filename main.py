@@ -122,6 +122,7 @@ bandit2_health_bar = HealthBar(550, H-bottom_panel+100, bandit2.hp, bandit2.max_
 
 #buttons
 main_menu_start_button = Button(green, 280, 100, 200, 50, text="play")
+main_menu_quit_button = Button(red, 280, 400, 200, 50, text="quit")
 
 def main_menu():
     in_menu = 1
@@ -135,10 +136,15 @@ def main_menu():
             else:
                 clicked = False
         main_menu_start_button.draw()
+        main_menu_quit_button.draw()
         pos = pygame.mouse.get_pos()
-        if main_menu_start_button.isOver:
-            if clicked:
+        if clicked:
+            if main_menu_start_button.isOver(pos):
                 game()
+            if main_menu_quit_button.isOver(pos):
+                exit()
+            else:
+                pass
         pygame.display.update()
         clock.tick(fps)
 
