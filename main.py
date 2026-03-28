@@ -92,6 +92,11 @@ class Hero():
             target.hp = 0
             target.alive = False
 
+    def reset(self):
+        self.alive = True
+        self.potions = self.start_potions
+        self.hp = self.max_hp
+
 
 
 class HealthBar():
@@ -123,6 +128,7 @@ bandit2_health_bar = HealthBar(550, H-bottom_panel+100, bandit2.hp, bandit2.max_
 #buttons
 main_menu_start_button = Button(green, 280, 100, 200, 50, text="play")
 main_menu_quit_button = Button(red, 280, 400, 200, 50, text="quit")
+level_selection_start_button = Button(green, 280, 400, 200, 50, text="play next")
 
 def main_menu():
     in_menu = 1
@@ -138,15 +144,23 @@ def main_menu():
         main_menu_start_button.draw()
         main_menu_quit_button.draw()
         pos = pygame.mouse.get_pos()
-        if clicked:
-            if main_menu_start_button.isOver(pos):
+        if main_menu_start_button.isOver(pos):
+            if clicked:
                 game()
-            if main_menu_quit_button.isOver(pos):
-                exit()
-            else:
-                pass
+                hero.reset()
+                for bandit in bandit_list:
+                    bandit.reset()
+
+        if main_menu_quit_button.isOver(pos):
+            if clicked:
+                pygame.QUIT()
         pygame.display.update()
         clock.tick(fps)
+
+def level_selection():
+    print("selecting the level...")
+    # TODO add levels ASAP
+    return "fight"
 
 def game(): # main game
     running = True
@@ -159,71 +173,123 @@ def game(): # main game
     attack = False
     potion = False
     clicked = False
-    level = 1
+    game_over = 0
+    next_level = level_selection()
 
     while running:
-        draw_bg()
+        if next_level == "menu":
+            running = 0
+        if next_level == "fight":
+            fighting = True
+            while fighting:
+                draw_bg()
 
-        draw_panel(panel)
-        hero_health_bar.draw(hero.hp)
-        bandit1_health_bar.draw(bandit1.hp)
-        bandit2_health_bar.draw(bandit2.hp)
+                draw_panel(panel)
+                hero_health_bar.draw(hero.hp)
+                bandit1_health_bar.draw(bandit1.hp)
+                bandit2_health_bar.draw(bandit2.hp)
 
-        hero.draw()
-        for bandit in bandit_list:
-            bandit.draw()
+                hero.draw()
+                for bandit in bandit_list:
+                    bandit.draw()
 
-        #control player actions
-        attack = False
-        potion = False
-        target = None
-        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-        pos = pygame.mouse.get_pos()
-        for count, bandit in enumerate(bandit_list):
-            if bandit.rect.collidepoint(pos):
-                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
-                if clicked:
-                    attack = True
-                    target = bandit_list[count]
-                
-        #player action
-        if hero.alive:
-            if current_fighter == 1:
-                action_cooldown += 1
-                if action_cooldown >= action_wait_time:
-                    #attack
-                    if attack == True and target != None:
-                        hero.attack(target)
-                        current_fighter += 1
-                        action_cooldown = 0
-
-        #enemy action
-        for count, bandit in enumerate(bandit_list):
-            if current_fighter == 2 + count:
-                if bandit.alive == True:
-                    action_cooldown += 1
-                    if action_cooldown >= action_wait_time:
-                        #attack
-                        bandit.attack(hero)
-                        current_fighter += 1
-                        action_cooldown = 0
+                #control player actions
+                attack = False
+                potion = False
+                target = None
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                pos = pygame.mouse.get_pos()
+                for count, bandit in enumerate(bandit_list):
+                    if bandit.rect.collidepoint(pos):
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
+                        if clicked:
+                            attack = True
+                            target = bandit_list[count]
+                        
+                #player action
+                if hero.alive:
+                    if current_fighter == 1:
+                        action_cooldown += 1
+                        if action_cooldown >= action_wait_time:
+                            #attack
+                            if attack == True and target != None:
+                                hero.attack(target)
+                                current_fighter += 1
+                                action_cooldown = 0
                 else:
-                    current_fighter += 1
+                    game_over = -1
+                    waiting_for_action = True
+                    next_level = "menu"
+                    fighting = False
+                    while waiting_for_action:
 
-        if current_fighter > total_fighters:
-            current_fighter = 1
+                        for event in pygame.event.get():
+                            draw_bg()
+                            draw_text("you lose", font, red, 350, 100)
+                            if event.type == pygame.QUIT:
+                                running = False
+                                waiting_for_action = False
+                            if event.type == pygame.MOUSEBUTTONDOWN:
+                                waiting_for_action = False
+                        
+                        pygame.display.update()
+                        clock.tick(fps)
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                clicked = True
-            else:
-                clicked = False
 
-        pygame.display.update()
-        clock.tick(fps)
-    pygame.quit()
+                #enemy action
+                for count, bandit in enumerate(bandit_list):
+                    if current_fighter == 2 + count:
+                        if bandit.alive == True:
+                            action_cooldown += 1
+                            if action_cooldown >= action_wait_time:
+                                #attack
+                                bandit.attack(hero)
+                                current_fighter += 1
+                                action_cooldown = 0
+                        else:
+                            current_fighter += 1
+
+                if current_fighter > total_fighters:
+                    current_fighter = 1
+
+                #check if all bandits are dead
+                alive_bandits = 0
+                for bandit in bandit_list:
+                    if bandit.alive == True:
+                        alive_bandits += 1
+
+
+                if alive_bandits == 0:
+                    game_over = 1
+                    fighting = False
+                    waiting_for_action = True
+                    while waiting_for_action:
+
+                        for event in pygame.event.get():
+                            draw_bg()
+                            draw_text("you win", font, green, 350, 100)
+
+                            if event.type == pygame.QUIT:
+                                running = False
+                                waiting_for_action = False
+                            if event.type == pygame.MOUSEBUTTONDOWN:
+                                waiting_for_action = False
+                        
+                        pygame.display.update()
+                        clock.tick(fps)
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
+                        fighting = False
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        clicked = True
+                    else:
+                        clicked = False
+
+                pygame.display.update()
+                clock.tick(fps)
+            next_level = "menu"
 
 if __name__ == "__main__":
     main_menu()
