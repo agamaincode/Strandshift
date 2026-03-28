@@ -199,15 +199,15 @@ def game(): # main game
                 attack = False
                 potion = False
                 target = None
-                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
                 pos = pygame.mouse.get_pos()
+                cursor = pygame.SYSTEM_CURSOR_ARROW
                 for count, bandit in enumerate(bandit_list):
                     if bandit.rect.collidepoint(pos):
-                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
+                        cursor = pygame.SYSTEM_CURSOR_CROSSHAIR
                         if clicked:
                             attack = True
                             target = bandit_list[count]
-                        
+                pygame.mouse.set_cursor(cursor)        
                 #player action
                 if hero.alive:
                     if current_fighter == 1:
