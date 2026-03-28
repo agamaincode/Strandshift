@@ -10,6 +10,7 @@ pygame.display.set_caption("Strandshift")
 
 # FONTS
 font = pygame.font.SysFont('Times New Roman', 24)
+bigger_font = pygame.font.SysFont('Times New Roman', 36)
 
 #define colors
 red = (255, 0, 0)
@@ -127,7 +128,7 @@ bandit2_health_bar = HealthBar(550, H-bottom_panel+100, bandit2.hp, bandit2.max_
 
 #buttons
 main_menu_start_button = Button(green, 280, 100, 200, 50, text="play")
-main_menu_quit_button = Button(red, 280, 400, 200, 50, text="quit")
+main_menu_quit_button = Button(red, 280, 200, 200, 50, text="quit")
 level_selection_start_button = Button(green, 280, 400, 200, 50, text="play next")
 
 def main_menu():
@@ -143,6 +144,7 @@ def main_menu():
                 clicked = False
         main_menu_start_button.draw()
         main_menu_quit_button.draw()
+        draw_text("Strandshift", bigger_font, (255, 255, 255), 300, 50)
         pos = pygame.mouse.get_pos()
         if main_menu_start_button.isOver(pos):
             if clicked:
@@ -225,7 +227,8 @@ def game(): # main game
 
                         for event in pygame.event.get():
                             draw_bg()
-                            draw_text("you lose", font, red, 350, 100)
+                            draw_text("you lose", bigger_font, red, 325, 100)
+                            draw_text("click to contiune", font, red, 325, 200)
                             if event.type == pygame.QUIT:
                                 running = False
                                 waiting_for_action = False
@@ -267,8 +270,8 @@ def game(): # main game
 
                         for event in pygame.event.get():
                             draw_bg()
-                            draw_text("you win", font, green, 350, 100)
-
+                            draw_text("you win", bigger_font, green, 325, 100)
+                            draw_text("click to contiune", font, green, 325, 200)
                             if event.type == pygame.QUIT:
                                 running = False
                                 waiting_for_action = False
