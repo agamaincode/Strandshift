@@ -18,6 +18,9 @@ BasicFont = pygame.font.SysFont('Times New Roman', 24)
 BiggerFont = pygame.font.SysFont('Times New Roman', 36)
 
 
+icon = pygame.image.load('imgs/icon.png')
+pygame.display.set_icon(icon)
+
 # COLORS
 red = (255, 0, 0)
 green = (0, 255, 0)
