@@ -12,6 +12,7 @@ class Hero():
         self.potions = potions
         self.alive = True
         self.image = pygame.image.load(f'imgs/{self.name}.png')
+        self.image = pygame.transform.scale(self.image, (256, 256))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
