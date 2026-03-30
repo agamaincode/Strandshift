@@ -1,11 +1,25 @@
 # Strandshift
-A simple turn-based RPG game made by 3 students, written in python with pygame
+A simple turn-based RPG game made by 3 students, made in python 
 
-# Installation
 
-everything you have to do is download this repository, the pygame library and python itself
+## Installation
 
-launching the game using:
+### Prerequisites
+- Python 3.7 or higher
+- pip (Python package installer)
+  
+### Step-by-step installation
+
+1. clone the repository
+```bash
+git clone https://github.com/agamaincode/strandshift
+```
+2. install pygame
+```bash
+pip install pygame
+```
+
+### Run the game
 ```
 python main.py
 ```
