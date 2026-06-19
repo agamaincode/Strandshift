@@ -18,6 +18,10 @@ git clone https://github.com/agamaincode/strandshift
 ```bash
 pip install pygame
 ```
+for arch-based
+```bash
+sudo pacman -S python-pygame
+```
 
 ### Run the game
 ```
